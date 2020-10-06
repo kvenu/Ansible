@@ -1,5 +1,47 @@
 - name: Deploy a web application
   hosts: db_and_web_servers
   tasks:
-    - name: Ping
-      ping:
+    - name: Install all required depedencies
+      yum: name={{ item }} state=installed
+      with_items:
+        - python
+        - python-setuptools
+        - python-dev
+        - build-essential
+        - python-pip
+
+    - name: Install MySQL database
+      yum: name={{ item }} state=installed
+      with_items:
+        - mysql-server
+        - mysql-client
+
+    - name: Start MySQL Service
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Create Application Database
+      mysql_db: name=employee_db state=present
+
+    - name: Create Database user
+      mysql_user:
+        name: db_user
+        password: Passw0rd
+        priv: '*.*:ALL'
+        host: '%'
+
+    - name: Install Python Flask depndency
+      pip:
+        name: {{ item }}
+        state: present
+      with_items:
+        - flask
+        - flask-mysql
+
+    - name: Copy source code
+      copy: src=app.py dest=/opt/app.py
+
+    - name: Start Web Server
+      shell: FLASK-app=/opt/app.py nohup falsk run --host=0.0.0.0 &
