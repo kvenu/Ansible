@@ -41,3 +41,8 @@
       yum:
         name: MySQL-python
         state: present
+
+    - name: Install pip
+      yum:
+        name: "python-pip"
+        state: present
