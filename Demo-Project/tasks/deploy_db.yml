@@ -25,6 +25,16 @@
         state: started
         enabled: yes
 
+    - name: Install mysql-python package
+      yum:
+        name: MySQL-python
+        state: present
+
+    - name: Install pip
+      yum:
+        name: "python-pip"
+        state: present
+
     - name: Create Application Database
       mysql_db:
         name: "{{ db_name }}"
@@ -37,12 +47,3 @@
         priv: '*.*:ALL'
         state: present
 
-    - name: Install mysql-python package
-      yum:
-        name: MySQL-python
-        state: present
-
-    - name: Install pip
-      yum:
-        name: "python-pip"
-        state: present
