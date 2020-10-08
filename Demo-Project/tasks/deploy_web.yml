@@ -1,0 +1,25 @@
+    - name: Install mysql-python package
+      yum:
+        name: MySQL-python
+        state: present
+
+    - name: Install pip
+      yum:
+        name: "python-pip"
+        state: present
+
+    - name: Install required Python libraries
+      pip:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - "flask"
+        - "flask-mysql"
+
+    - name: Copy source code
+      copy:
+        src: app.py
+        dest: /opt/app.py
+
+    - name: Start web server
+      shell: FLASK_APP=/opt/app.py nohup flask run --host=0.0.0.0 &
